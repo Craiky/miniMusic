@@ -1,0 +1,205 @@
+<!doctype html>
+<meta charset=utf-8>
+<body id=b>
+<p class="test2">mini-music  <a href="http://xem.github.io/" target="_blank" class="test">By: Xem</a></p>
+<div id=c></div>
+<br style=clear:both>
+<p class="test1">Grey line: <input id=z size=2 value=440> hz. Tempo: <input id=t size=2 value=100> ms.
+<p class="test1">Oscillator: <input type=radio name=wave value=sine checked id=sine> sine / <input type=radio name=wave value=square id=square> square / <input type=radio name=wave value=sawtooth id=sawtooth> sawtooth / <input type=radio name=wave value=triangle id=triangle> triangle.
+<p class="test1">Click on notes and press play.
+<p class="test1"><button id=p>PLAY</button>
+<p class="test1">JS export (smaller if volume = 1 & oscillator = "sine")
+<p><textarea id=exp></textarea>
+<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+
+
+<style>
+* { box-sizing: border-box;
+}
+body{
+background-color:#8EB19D;
+background-image:
+radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px; 
+background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+margin: 0;
+}
+.test1{
+min-width: 600px;
+background-color: rgba(255, 255, 255, .75);
+text-transform: uppercase;
+font-family:  'Press Start 2P', cursive;
+font-size: 10px;
+text-align: center;
+margin-left: 25%;
+margin-right: 25%;
+padding: 5px;
+border: 5px ridge silver;
+color: #8EB19D;
+}
+.test2{
+min-width: 600px;
+background-color: rgba(255, 255, 255, .75);
+text-transform: uppercase;
+font-family: 'Press Start 2P', cursive;
+text-align: center;
+margin-left: 25%;
+margin-right: 25%;
+margin-bottom: 10px;
+margin-top: 10px;
+padding: 5px;
+border: 5px ridge silver;
+color: #8EB19D;
+font-size: 50px;
+height: 80px;
+}
+
+.test{
+min-width: 600px;
+text-transform: capitalize;
+font-family: 'Press Start 2P', cursive;
+text-align: center;
+color: #8EB19D;
+text-decoration: none;
+font-size: 12px;
+display: block;
+margin: 5px;
+position: absolute;
+top: 9%;
+right: 0px;
+bottom: 0;
+left: 25%;
+height: 20px;
+width: 10px;
+}
+.test3{
+min-width: 600px;
+text-transform: capitalize;
+font-family: 'Press Start 2P', cursive;
+text-align: center;
+color: black;
+text-decoration: none;
+font-size: 10px;
+display: block;
+margin-top: 10px;
+margin-bottom: 10px;
+}
+.test4{
+min-width: 600px;
+text-transform: capitalize;
+font-family: 'Press Start 2P', cursive;
+text-align: center;
+color: black;
+text-decoration: none;
+font-size: 10px;
+display: block;
+margin-bottom: 0px;
+
+}
+a{
+	text-decoration: none;
+	color: silver;
+}
+.test:hover{
+	text-decoration: underline;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+a:hover{
+	text-decoration: underline;
+	text-transform: uppercase;
+	font-weight: bold;
+	}
+textarea{
+	min-width: 600px;
+	background-color: rgba(255, 255, 255, .75);
+	border: 5px ridge silver;
+	margin-top: 0;
+	margin-left: 24.5%;
+	margin-bottom: 10%;
+}
+footer{
+	background-color: gray;
+	width: 100%;
+	margin: 0%;
+	height: 100%;
+	position: fixed;
+	top: 83%;
+	right: 0px;
+	bottom: 0;
+	left: 0px;
+	height: 10%;
+	margin-top: 50px;
+	text-align: center;
+	border: 2px solid #333;
+}
+button, input{
+	background-color: white;
+	margin: 5px;
+}
+#c { width: 5000px; }
+.note { width: 20px; height: 20px; float: left; border: 2px solid; color: #59FF00;
+}
+[line="13"] { background: gray}
+#exp, #exp2 { width: 90vh; height: 100px }
+</style>
+
+<script>
+A = new AudioContext;
+d = [];
+h='';
+for(i = 1; i < 26; i++){
+  d[i] = [];
+  for(j = 0; j < 250; j++){
+    h+='<div class=note line='+i+' id=c'+i+'_'+j+' onclick=toggle('+i+','+j+',this,0) onmouseover=toggle('+i+','+j+',this,1) '+(j == 0 && [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].indexOf(i-1) > -1 ? "style=background:gray": (j==0 || i == 13) ? "" : "")+'></div>';
+  }
+}
+c.innerHTML = h;
+mousedown = 0;
+onmousedown=e=>{mousedown = 1;}
+onmouseup=e=>{mousedown = 0;}
+toggle=(i,j,t,f)=>{
+  if(j==0)return;
+  if(f && mousedown){
+    d[i][j] = 1;
+  }
+  else if(!f){
+    d[i][j] ^= 1;
+  }
+  t.style.background = d[i][j] ? "green" : i == 13 ? "" : "";
+}
+p.onclick=()=>{
+  A.close();
+  
+  wave="sine";
+  if(square.checked) wave = "square";
+  if(sawtooth.checked) wave = "sawtooth";
+  if(triangle.checked) wave = "triangle";
+  df = [];
+  for(i = 1; i < 26; i++){
+    for(j = 0; j < 1000; j++){
+      if(d[i][j]){
+        df.push([i,j]);
+      }
+    }
+  }
+    keys = [];
+    values = [];
+    for(i in df){
+      keys[i] = df[i][0];
+      values[i] = df[i][1];
+    }
+    //exp.value = `with(new AudioContext)for(i in D=${JSON.stringify(df)})with(createOscillator())if(D[i])connect(destination),frequency.value=${+z.value}*1.06**(14-D[i][0]),${(wave=="sine")?"":"type='"+wave+"',"}start(D[i][1]*${(""+t.value/1e3).replace("0.",".")}),stop(D[i][1]*${(""+t.value/1e3).replace("0.",".")}+${(""+t.value/1e3).replace("0.",".")})`;
+    
+    eval(exp.value = `with(new AudioContext)${JSON.stringify(keys)}.map((v,i)=>{with(createOscillator())v&&start(e=${JSON.stringify(values)}[i]/5,connect(destination),frequency.value=988/1.06**v${(wave=="sine")?"":",type='"+wave+"',"})+stop(e+.2)})`);
+}
+</script>
+ </body>
+ <footer>
+ <h3 class="test3">Source code can be found:<a href="https://github.com/xem/miniMusic" target="_blank">Here</a></h3>
+ <h3 class="test3">styled by:<a href="http://addison.tcraik.com/Games/" target="_blank">The_Coder</a></h3>
+ <h2 class="test4">Mini-music 2017</h2>
+ </footer>
